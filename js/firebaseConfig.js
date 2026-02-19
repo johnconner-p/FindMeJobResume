@@ -10,7 +10,6 @@ const firebaseConfig = {
   storageBucket: "resumetrackin.firebasestorage.app",
   messagingSenderId: "647829258405",
   appId: "1:647829258405:web:558537b72e47744af10d4c",
-  measurementId: "G-GZ9Q64BD62"
 };
 
 // Initialize Firebase
