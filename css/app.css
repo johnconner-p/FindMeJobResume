@@ -1,0 +1,165 @@
+/* --- App UI (Not Resume) --- */
+body.app-body {
+    background: #e0e0e0;
+    padding: 0;
+    display: block;
+    font-family: 'Roboto', sans-serif;
+}
+
+/* Login/Dashboard Container */
+.app-container {
+    max-width: 900px;
+    margin: 50px auto;
+    padding: 20px;
+}
+
+.auth-box {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    max-width: 400px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.auth-box input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+/* Dashboard List */
+.resume-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.resume-card {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    transition: transform 0.2s;
+    position: relative;
+}
+
+.resume-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.card-actions {
+    margin-top: 15px;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* Editor Specifics */
+body.editor-mode {
+    padding-left: 320px;
+    display: flex;
+    justify-content: center;
+}
+
+.editor-sidebar {
+    position: fixed; top: 0; left: 0; bottom: 0; width: 300px;
+    background: #2c3e50; color: white; padding: 20px; overflow-y: auto;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.2); z-index: 1000;
+}
+
+.editor-sidebar h2 { margin-bottom: 20px; font-size: 18px; border-bottom: 1px solid #4a6fa5; padding-bottom: 10px; }
+.control-group { margin-bottom: 20px; border-bottom: 1px solid #4a6fa5; padding-bottom: 15px; }
+.control-label { display: block; margin-bottom: 5px; font-size: 12px; opacity: 0.8; }
+
+.btn {
+    display: inline-block; padding: 8px 12px;
+    border: none; border-radius: 4px; cursor: pointer; font-weight: bold;
+    text-align: center; text-decoration: none; font-size: 13px;
+}
+.btn-block { display: block; width: 100%; margin-bottom: 5px; }
+.btn-primary { background: #3498db; color: white; }
+.btn-success { background: #27ae60; color: white; }
+.btn-danger { background: #c0392b; color: white; }
+.btn-secondary { background: #95a5a6; color: white; }
+.btn:hover { opacity: 0.9; }
+
+/* Draggable List Styles */
+.sortable-list { list-style: none; padding: 0; background: rgba(255,255,255,0.1); border-radius: 4px; padding: 5px; }
+.sortable-item {
+    padding: 8px; margin-bottom: 5px; background: rgba(255,255,255,0.1);
+    border-radius: 3px; cursor: move; display: flex; justify-content: space-between;
+    font-size: 13px;
+}
+
+/* Editable Visual Cues */
+[contenteditable]:hover { outline: 2px dashed #3498db; background: rgba(52, 152, 219, 0.05); }
+[contenteditable]:focus { outline: 2px solid #3498db; background: white; }
+
+/* Status Indicator */
+#save-status { font-size: 11px; margin-top: 5px; text-align: right; font-style: italic; }
+
+/* PRINT OVERRIDES FROM OLD EDITOR.JS - ESSENTIAL FOR PIXEL PERFECTION */
+@media print {
+    @page { 
+        size: A4; 
+        margin: 0mm;
+    }
+    
+    html, body { 
+        width: 210mm;
+        height: 297mm;
+        margin: 0 !important; 
+        padding: 0 !important; 
+        background: white !important; 
+        -webkit-print-color-adjust: exact !important; 
+        print-color-adjust: exact !important;
+        overflow: hidden !important;
+    }
+
+    .editor-sidebar, .control-group, button, .app-ui { display: none !important; }
+    
+    [contenteditable] { 
+        border: none !important; outline: none !important; 
+        background: transparent !important; box-shadow: none !important;
+        padding: 0 !important;
+    }
+    #name, #title { border-bottom: none !important; }
+
+    .section-title {
+        border-bottom: 1px solid #333 !important;
+        padding-bottom: 2px !important;
+        margin-bottom: 6px !important;
+    }
+
+    .page {
+        width: 210mm !important;
+        height: 296mm !important;
+        margin: 0 !important;
+        padding: 6mm 2mm 6mm 2mm !important; 
+        border: none !important;
+        box-shadow: none !important;
+        overflow: hidden !important;
+        position: relative;
+    }
+
+    .cols { gap: 35px !important; }
+    .col-left, .col-right { flex-shrink: 1 !important; }
+
+    .resume-content {
+        width: 100%;
+        zoom: 0.92; /* The critical zoom factor from your previous file */
+    }
+
+    .resume-header { margin-bottom: 12px !important; }
+    .section { margin-bottom: 10px !important; }
+    .exp-item, .sidebar-item { margin-bottom: 6px !important; }
+    
+    p, li, .exp-desc, .sidebar-desc { line-height: 1.35 !important; }
+    ul.exp-bullets, ul.sidebar-bullets { margin-bottom: 2px !important; }
+}
