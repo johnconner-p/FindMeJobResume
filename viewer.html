@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume View</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { background: #e0e0e0; display: flex; justify-content: center; }
+        /* When printing a view-only resume, ensure same rules apply */
+        @media print {
+            body { background: white; }
+            .page { margin: 0; box-shadow: none; width: 210mm; height: 297mm; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page" id="resume-container">
+        <!-- Rendered Here -->
+    </div>
+
+    <script type="module">
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore.js";
+        import app from './js/firebaseConfig.js';
+        import { renderResume } from './js/resumeRenderer.js';
+
+        const db = getFirestore(app);
+        
+        // This logic is slightly different because we don't know the USER ID, only the Resume ID.
+        // HOWEVER, Firestore paths are users/{uid}/resumes/{id}.
+        // We cannot query efficiently without the UID if we structure it that way.
+        // FIX: The URL should be viewer.html?uid=XYZ&id=ABC
+        // OR: We create a collection group query (better for "public" links).
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const resumeId = urlParams.get('id');
+        // If you want "clean" URLs (just ID), you need a flat "resumes" collection mapped to users.
+        // For this specific architecture request (users/{uid}/resumes), we need the UID in the URL too.
+        const uid = urlParams.get('uid');
+
+        async function loadPublicResume() {
+            if(!uid || !resumeId) {
+                document.body.innerHTML = "Invalid Link";
+                return;
+            }
+
+            try {
+                const docRef = doc(db, `users/${uid}/resumes/${resumeId}`);
+                const docSnap = await getDoc(docRef);
+                
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    renderResume(data, document.getElementById('resume-container'), { editable: false });
+                } else {
+                    document.body.innerHTML = "Resume not found.";
+                }
+            } catch (e) {
+                console.error(e);
+                document.body.innerHTML = "Error loading resume.";
+            }
+        }
+
+        loadPublicResume();
+    </script>
+</body>
+</html>
+```
+
+### 3. Deployment Instructions
+
+1.  **Firebase Setup:**
+    * Go to [console.firebase.google.com](https://console.firebase.google.com).
+    * Create a project.
+    * Enable **Authentication** (Email/Password provider).
+    * Enable **Firestore Database**.
+    * **Firestore Rules (Security):**
+        ```text
+        rules_version = '2';
+        service cloud.firestore {
+          match /databases/{database}/documents {
+            match /users/{userId}/resumes/{resumeId} {
+              // Allow users to read/write their own data
+              allow read, write: if request.auth != null && request.auth.uid == userId;
+              // Allow public read (for viewer) - Adjust if you want stricter privacy
+              allow read: if true; 
+            }
+          }
+        }

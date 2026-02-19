@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor</title>
+    <!-- Critical: The exact resume styles -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- UI styles (sidebar, etc) -->
+    <link rel="stylesheet" href="css/app.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,300;0,400;0,500;0,700;0,900;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="editor-mode">
+
+    <!-- Sidebar -->
+    <div class="editor-sidebar app-ui">
+        <h2>Resume Editor</h2>
+        
+        <div class="control-group">
+            <a href="dashboard.html" class="btn btn-secondary btn-block">Back to Dashboard</a>
+            <div id="save-status"></div>
+        </div>
+
+        <div class="control-group">
+            <button onclick="window.downloadJson()" class="btn btn-success btn-block">
+                <i class="fas fa-download"></i> Download JSON
+            </button>
+            <button onclick="window.print()" class="btn btn-danger btn-block">
+                <i class="fas fa-file-pdf"></i> Save as PDF
+            </button>
+        </div>
+
+        <div class="control-group">
+            <span class="control-label">Layout (Drag to Reorder)</span>
+            <div style="font-size:12px; font-weight:bold;">Left Column</div>
+            <ul id="list-left" class="sortable-list"></ul>
+            <div style="font-size:12px; font-weight:bold; margin-top:10px;">Right Column</div>
+            <ul id="list-right" class="sortable-list"></ul>
+            <button onclick="window.updateLayoutFromSidebar()" class="btn btn-primary btn-block" style="margin-top:10px;">Apply Layout</button>
+        </div>
+
+        <div class="control-group">
+            <span class="control-label">Global Font Scale</span>
+            <input type="range" id="fontScaleSlider" min="0.8" max="1.3" step="0.05" style="width:100%">
+        </div>
+
+        <div class="control-group">
+            <span class="control-label">Tools</span>
+            <button onclick="document.execCommand('bold')" class="btn btn-secondary btn-block">
+                <i class="fas fa-bold"></i> Bold Selection
+            </button>
+        </div>
+    </div>
+
+    <!-- Resume Container -->
+    <div class="page" id="resume-container">
+        <!-- Content Rendered Here -->
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+    <script type="module">
+        import { monitorAuth } from './js/auth.js';
+        import { initEditor } from './js/editorLogic.js';
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const resumeId = urlParams.get('id');
+
+        monitorAuth((user) => {
+            if (!user) window.location.href = 'index.html';
+            if (!resumeId) window.location.href = 'dashboard.html';
+            initEditor(user.uid, resumeId);
+        });
+    </script>
+</body>
+</html>

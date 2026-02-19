@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Resumes</title>
+    <link rel="stylesheet" href="css/app.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="app-body">
+    <div class="app-container">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h2>My Resumes</h2>
+            <button id="logoutBtn" class="btn btn-danger">Logout</button>
+        </div>
+        <hr>
+        <button id="createBtn" class="btn btn-success"><i class="fas fa-plus"></i> Create New Resume</button>
+        
+        <div id="resume-grid" class="resume-grid"></div>
+    </div>
+
+    <script type="module">
+        import { monitorAuth, logout } from './js/auth.js';
+        import { initDashboard } from './js/dashboardLogic.js';
+        import { createResume, deleteResume } from './js/db.js';
+        import { getDefaultResume } from './js/utils.js';
+
+        let currentUser = null;
+
+        monitorAuth((user) => {
+            if (!user) window.location.href = 'index.html';
+            currentUser = user;
+            initDashboard(user);
+        });
+
+        document.getElementById('logoutBtn').onclick = logout;
+        
+        document.getElementById('createBtn').onclick = async () => {
+            if(currentUser) {
+                const data = getDefaultResume();
+                const id = await createResume(currentUser.uid, data);
+                window.location.href = `editor.html?id=${id}`;
+            }
+        };
+
+        // Global delete handler
+        window.handleDelete = async (id) => {
+            if(confirm("Delete this resume?")) {
+                await deleteResume(currentUser.uid, id);
+                initDashboard(currentUser);
+            }
+        };
+    </script>
+</body>
+</html>
